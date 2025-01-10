@@ -681,8 +681,20 @@ void Skills() {
   chassis.pid_wait();
   chassis.pid_turn_set(-15,80);
   chassis.pid_wait();
-   chassis.pid_drive_set(-50, 70, true);
+  chassis.pid_drive_set(-50, 70, true);
   chassis.pid_wait();
+  chassis.pid_drive_set(5, 70, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(0,80);
+  chassis.pid_wait();
+  intake.move(0);
+  chassis.pid_drive_set(100, 70, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(30,80);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-10, 70, true);
+  chassis.pid_wait();
+
 
 
 
