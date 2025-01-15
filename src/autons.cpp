@@ -1,3 +1,4 @@
+#include "autons.hpp"
 #include "main.h"
 #include "pros/rtos.hpp"
 
@@ -449,7 +450,7 @@ void RedWP() {
   chassis.pid_wait();
   chassis.pid_drive_set(-15, 100, true);
   chassis.pid_wait();
-  chassis.pid_turn_set(160,80);
+  chassis.pid_turn_set(220,80);
   chassis.pid_drive_set(40, 100, true);
   chassis.pid_wait();
 
@@ -489,7 +490,7 @@ void RedWP() {
   chassis.pid_wait();
   chassis.pid_turn_set(20,80);
   chassis.pid_wait();
-  chassis.pid_drive_set(27, 100, true);
+  chassis.pid_drive_set(3089, 100, true);
   chassis.pid_wait();
 
 }
@@ -531,8 +532,8 @@ void BlueWP() {
   chassis.pid_wait();
   chassis.pid_drive_set(-15, 100, true);
   chassis.pid_wait();
-  chassis.pid_turn_set(160,80);
-  chassis.pid_drive_set(40, 100, true);
+  chassis.pid_turn_set(200,80);
+  chassis.pid_drive_set(50, 100, true);
   chassis.pid_wait();
 
 
@@ -555,7 +556,6 @@ void Blue3Ring() {
   intake.move(127);
   chassis.pid_drive_set(25, 40, true);
   chassis.pid_wait();
-  pros::delay(200);
   intake.move(0);
   chassis.pid_turn_set(-35,80);
   chassis.pid_drive_set(-30, 100, true);
@@ -576,7 +576,7 @@ void Blue3Ring() {
   pros::delay(400);
   chassis.pid_turn_set(15,80);
   chassis.pid_wait();
-  chassis.pid_drive_set(30, 100, true);
+  chassis.pid_drive_set(33, 100, true);
 
 }
 
@@ -624,7 +624,7 @@ void Skills() {
   chassis.pid_drive_set(15, 100, true);
   chassis.pid_wait();
   pros::delay(400);
-  chassis.pid_turn_set(100,80);
+  chassis.pid_turn_set(105,80);
   chassis.pid_wait();
   chassis.pid_drive_set(-10, 100, true);
   chassis.pid_wait();
@@ -685,7 +685,7 @@ void Skills() {
   chassis.pid_wait();
   chassis.pid_drive_set(5, 70, true);
   chassis.pid_wait();
-  chassis.pid_turn_set(0,80);
+  chassis.pid_turn_set(3,80);
   chassis.pid_wait();
   intake.move(0);
   chassis.pid_drive_set(100, 70, true);
@@ -695,12 +695,42 @@ void Skills() {
   chassis.pid_drive_set(-10, 70, true);
   chassis.pid_wait();
 
+}
 
-
-
-
-
-
+void skills2() {
+  chassis.odom_xyt_set(-59_in, 6_in, 270_deg);
+  nextstate();
+  nextstate();
+  chassis.pid_wait();
+  chassis.pid_odom_set({{-47_in, 23_in, 210_deg}, rev, 60},
+                       true);
+  chassis.pid_wait();
+  Mogo_mech.set_value(1);
+  nextstate();
+  pros::delay(100);
+  intake.move(127);
+  chassis.pid_odom_set({{-23_in, 23_in, 47_deg}, fwd, 115},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{0_in, 59_in, 0_deg}, fwd, 115},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{23_in, 47_in, 256_deg}, fwd, 115},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{66_in, 47_in, 270_deg}, fwd, 60},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{-41_in, 47_in, 333_deg}, rev, 100},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{-48_in, 62_in, 333_deg}, fwd, 100},
+                       true);
+  chassis.pid_wait();
+  chassis.pid_odom_set({{-65_in, -65_in, 138_deg}, rev, 85},
+                       true);
+  chassis.pid_wait();
+  Mogo_mech.set_value(0);
 
 
 }

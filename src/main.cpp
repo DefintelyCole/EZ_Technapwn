@@ -1,6 +1,8 @@
 #include "main.h"
+#include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
+#include "subsystems.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -365,11 +367,19 @@ void opcontrol() {
 
 
 
+
           // controls for release on claw
          if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
           scoop.set_value(true);
          } else {
           scoop.set_value(false);
+         }
+
+         // controls for release on claw
+         if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+          ring_rush.set_value(true);
+         } else {
+          ring_rush.set_value(false);
          }
 
 
@@ -385,10 +395,13 @@ void opcontrol() {
          } else if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
               team_color = blue;
              
+         } else if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+              team_color = none;
+              eject.set_value(0);
          }
 
 
-         
+
      if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       nextstate();
     }

@@ -2,6 +2,7 @@
 
 #include "EZ-Template/api.hpp"
 #include "api.h"
+#include "pros/adi.hpp"
 #include "pros/misc.hpp"
 
 extern Drive chassis;
@@ -21,8 +22,11 @@ inline pros::adi::DigitalOut eject('E');
 inline pros::Optical color(13);
 inline pros::Rotation lb(11);
 inline pros::Controller Master(pros::E_CONTROLLER_MASTER);
+inline pros::adi::DigitalOut ring_rush('D');
 
 inline std::string team_color;
 inline std::string blue = "blue";
 inline std::string red = "red";
+inline std::string none = "none";
+
 
