@@ -1,4 +1,5 @@
 #include "main.h"
+#include "autons.hpp"
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
@@ -32,7 +33,7 @@ ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpen
 ez::tracking_wheel vert_tracker(19, 2, 1.25);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 3;
-int states[numStates] = {0, -2000, -14000};
+int states[numStates] = {0, -2000, -17000};
 int currState = 0;
 int target = 0;
 
@@ -51,9 +52,9 @@ void nextstate() {
 
 
 void liftControl() {
-    double kp = 0.01;
+    double kp = 0.005;
     double error = target - lb.get_position();
-    double velocity = kp * error;
+    double velocity = kp * error*3 ;
     Lift.move(velocity);
 }
 
@@ -62,17 +63,17 @@ void colorsort() {
    
   if (team_color == red){
     if(color.get_hue() > 185){
-      pros::delay(1);
+      pros::delay(50);
       eject.set_value(1);
-      pros::delay(300);
+      pros::delay(200);
       eject.set_value(0);
     }
   }
   else if (team_color == blue) {
     if(color.get_hue() < 40){
-      pros::delay(1);
+      pros::delay(50);
       eject.set_value(1);
-      pros::delay(300);
+      pros::delay(200);
       eject.set_value(0);
     }
    
@@ -143,20 +144,16 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
       {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 3 rings on", RedWP},
+      {"Red4Ring\n\nRedWP with rush to middle", Red4Ring},
       {"Red3Ring\n\nputs a rng on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red3Ring},
+      {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
+      {"RedRingRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", RedRush},
       {"BlueWP\n\nMirror of RedWP", BlueWP},
+      {"Blue4Ring\n\nBlueWP with rush to middle", Blue4Ring},
       {"Blue3Ring\n\nMirror of Red3Ring", Blue3Ring},
+      {"BlueGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", BlueGoal},
+      {"BlueRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", BlueRush},
       {"Skills\n\nscores 6 rings on 2 goals in corner and pushes 2 other goals in to corners", Skills},
-      {"Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining},
-      {"Combine all 3 movements", combining_movements},
-      {"Interference\n\nAfter driving forward, robot performs differently if interfered or not", interfered_example},
-      {"Simple Odom\n\nThis is the same as the drive example, but it uses odom instead!", odom_drive_example},
-      {"Pure Pursuit\n\nGo to (0, 30) and pass through (6, 10) on the way.  Come back to (0, 0)", odom_pure_pursuit_example},
-      {"Pure Pursuit Wait Until\n\nGo to (24, 24) but start running an intake once the robot passes (12, 24)", odom_pure_pursuit_wait_until_example},
-      {"Boomerang\n\nGo to (0, 24, 45) then come back to (0, 0, 0)", odom_boomerang_example},
-      {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
-      {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
-      {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 3 rings on", RedWP},
       
   });
 
@@ -403,6 +400,10 @@ void opcontrol() {
 
 
      if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+      nextstate();
+    }
+
+    if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
       nextstate();
     }
      pros::delay(20);
