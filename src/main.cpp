@@ -1,4 +1,7 @@
 #include "main.h"
+#include <chrono>
+#include "EZ-Template/auton_selector.hpp"
+#include "EZ-Template/sdcard.hpp"
 #include "autons.hpp"
 #include "pros/misc.h"
 #include "pros/motor_group.hpp"
@@ -29,13 +32,14 @@ ez::Drive chassis(
 //  - you should get positive values on the encoders going FORWARD and RIGHT
 // - `2.75` is the wheel diameter
 // - `4.0` is the distance from the center of the wheel to the center of the robot
-ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(19, 2, 1.25);   // This tracking wheel is parallel to the drive wheels
+// ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
+ez::tracking_wheel vert_tracker(18, 2, 0);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 3;
-int states[numStates] = {0, -2000, -17000};
+int states[numStates] = {0, -2300, -17000};
 int currState = 0;
 int target = 0;
+int killsafe = 0;
 
 
 void nextstate() {
@@ -52,9 +56,9 @@ void nextstate() {
 
 
 void liftControl() {
-    double kp = 0.005;
+    double kp = 0.003;
     double error = target - lb.get_position();
-    double velocity = kp * error*3 ;
+    double velocity = kp * error*4;
     Lift.move(velocity);
 }
 
@@ -62,8 +66,9 @@ void liftControl() {
 void colorsort() {
    
   if (team_color == red){
-    if(color.get_hue() > 185){
-      pros::delay(50);
+    if(color.get_hue() > 145){
+      killsafe += 1;
+      pros::delay(1);
       eject.set_value(1);
       pros::delay(200);
       eject.set_value(0);
@@ -71,7 +76,8 @@ void colorsort() {
   }
   else if (team_color == blue) {
     if(color.get_hue() < 40){
-      pros::delay(50);
+      killsafe += 1;
+      pros::delay(1);
       eject.set_value(1);
       pros::delay(200);
       eject.set_value(0);
@@ -83,11 +89,24 @@ void colorsort() {
   }
 
 
+
 }
 
 
 
+void Killswitch () {
+       while (true) {
 
+
+       pros::delay(1500);
+
+       if (killsafe >= 3) {
+        team_color = none;
+      } else if (killsafe <= 2){
+       killsafe = 0;
+     }
+  }
+};
 
 
 
@@ -111,23 +130,33 @@ void initialize() {
         }
     });
 
+    pros::Task Kill([]{
+        while (true) {
+            Killswitch();
+            pros::delay(10);
+
+        }
+    }
+    );
 
     pros::Task ColorSortTask([]{
         while (true) {
             colorsort();
             pros::delay(10);
         }
-    });
-   
+    }
+    );
+
+    
 
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
   //  - change `back` to `front` if the tracking wheel is in front of the midline
   //  - ignore this if you aren't using a horizontal tracker
-  chassis.odom_tracker_back_set(&horiz_tracker);
+  // chassis.odom_tracker_back_set(&horiz_tracker);
   // Look at your vertical tracking wheel and decide if it's to the left or right of the center of the robot
   //  - change `left` to `right` if the tracking wheel is to the right of the centerline
   //  - ignore this if you aren't using a vertical tracker
-  chassis.odom_tracker_left_set(&vert_tracker);
+  chassis.odom_tracker_right_set(&vert_tracker);
 
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(true);   // Enables modifying the controller curve with buttons on the joysticks
@@ -144,7 +173,8 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
       {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 3 rings on", RedWP},
-      {"Red4Ring\n\nRedWP with rush to middle", Red4Ring},
+      {"Red4Ring\n\nRedWP with rush to middle", Red6Ring},
+      {"RedSigWP\n\nfull auton WP for Signature Events", RedSigWP},
       {"Red3Ring\n\nputs a rng on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red3Ring},
       {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
       {"RedRingRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", RedRush},
