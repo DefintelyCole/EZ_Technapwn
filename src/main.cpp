@@ -36,7 +36,7 @@ ez::Drive chassis(
 ez::tracking_wheel vert_tracker(18, 2, 0);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 3;
-int states[numStates] = {0, -2300, -17000};
+int states[numStates] = {0, -1900, -17000};
 int currState = 0;
 int target = 0;
 int killsafe = 0;
