@@ -14,7 +14,9 @@ extern Drive chassis;
 
 // inline pros::Motor intake(1);
 // inline pros::adi::DigitalIn limit_switch('A');
-inline pros::MotorGroup intake ({20,2});
+inline pros::MotorGroup intake ({-20,2});
+inline pros::Motor intakebottom (20);
+inline pros::Motor intaketop (2);
 inline pros::Motor Lift (-9);
 inline pros::adi::DigitalOut Mogo_mech('H');
 inline pros::adi::DigitalOut scoop('G');

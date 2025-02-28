@@ -33,10 +33,10 @@ ez::Drive chassis(
 // - `2.75` is the wheel diameter
 // - `4.0` is the distance from the center of the wheel to the center of the robot
 // ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(18, 2, 0);   // This tracking wheel is parallel to the drive wheels
+ez::tracking_wheel vert_tracker(18, 2, 0.25);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 3;
-int states[numStates] = {0, -1900, -17000};
+int states[numStates] = {0, -1100, -17000};
 int currState = 0;
 int target = 0;
 int killsafe = 0;
@@ -172,18 +172,20 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 3 rings on", RedWP},
-      {"Red4Ring\n\nRedWP with rush to middle", Red6Ring},
+      {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 4 rings on then touches bar", RedWP},
+      {"Red6Ring\n\nRedWP with rush to middle", Red6Ring},
       {"RedSigWP\n\nfull auton WP for Signature Events", RedSigWP},
-      {"Red3Ring\n\nputs a rng on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red3Ring},
+      {"Red3Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red4Ring},
       {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
-      {"RedRingRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", RedRush},
+      {"Red4RingWP\n\nRed4Ring but touches middle bar", Red4RingWP},
       {"BlueWP\n\nMirror of RedWP", BlueWP},
-      {"Blue4Ring\n\nBlueWP with rush to middle", Blue4Ring},
+      {"Blue6Ring\n\nBlueWP with rush to middle", Blue6Ring},
+      {"Blue4Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Blue4Ring},
       {"Blue3Ring\n\nMirror of Red3Ring", Blue3Ring},
       {"BlueGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", BlueGoal},
       {"BlueRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", BlueRush},
       {"Skills\n\nscores 6 rings on 2 goals in corner and pushes 2 other goals in to corners", Skills},
+      {"test\n\nPID Tuning", drive_example},
       
   });
 
