@@ -32,3 +32,4 @@ void BlueGoal();
 void RedSigWP();
 void Red4RingWP();
 void Blue6Ring();
+void BlueSigWP();

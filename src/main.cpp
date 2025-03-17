@@ -23,7 +23,7 @@ ez::Drive chassis(
     {-21, -7, -6},     // Left Chassis Ports (negative port will reverse it!)
     {3, 4, 5},  // Right Chassis Ports (negative port will reverse it!)
 
-    12,      // IMU Port
+    19,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     450);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
@@ -33,10 +33,10 @@ ez::Drive chassis(
 // - `2.75` is the wheel diameter
 // - `4.0` is the distance from the center of the wheel to the center of the robot
 // ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(18, 2, 0.25);   // This tracking wheel is parallel to the drive wheels
+ez::tracking_wheel vert_tracker(10, 2, 0.25);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 3;
-int states[numStates] = {0, -1100, -17000};
+int states[numStates] = {0, 6000, 70000};
 int currState = 0;
 int target = 0;
 int killsafe = 0;
@@ -56,9 +56,9 @@ void nextstate() {
 
 
 void liftControl() {
-    double kp = 0.003;
+    double kp = 0.002;
     double error = target - lb.get_position();
-    double velocity = kp * error*4;
+    double velocity = kp * error*3;
     Lift.move(velocity);
 }
 
@@ -92,6 +92,41 @@ void colorsort() {
 
 }
 
+
+
+
+
+
+
+// void jamprevention() {
+  
+//   if (intaketop.get_actual_velocity() < 5){
+//       intaketop.move(-127);
+//       pros::delay(2000);
+//       intaketop.move(127);
+//       pros::delay(200);
+    
+//   }
+
+// }
+
+
+// void stuck() {
+
+// while(true) {
+//   if (belt_state == on) {
+//     jamprevention();
+//   }
+
+//   if (belt_state == off) {
+//     intake.move(0);
+//   }
+
+
+
+// }
+
+// }
 
 
 void Killswitch () {
@@ -147,6 +182,14 @@ void initialize() {
     }
     );
 
+    // pros::Task Jam([]{
+    //     while (true) {
+    //         stuck();
+    //         pros::delay(10);
+    //     }
+    // }
+    // );
+
     
 
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
@@ -178,7 +221,9 @@ void initialize() {
       {"Red3Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red4Ring},
       {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
       {"Red4RingWP\n\nRed4Ring but touches middle bar", Red4RingWP},
+      {"RedRush\n\nRing Rush", RedRush},
       {"BlueWP\n\nMirror of RedWP", BlueWP},
+      {"BlueSigWP\n\nfull auton WP for Signature Events", BlueSigWP},
       {"Blue6Ring\n\nBlueWP with rush to middle", Blue6Ring},
       {"Blue4Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Blue4Ring},
       {"Blue3Ring\n\nMirror of Red3Ring", Blue3Ring},
@@ -280,6 +325,7 @@ void ez_screen_task() {
           // Display X, Y, and Theta
           ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
                                "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
+                              //  "\nvelocity: " + util::to_string_with_precision(intaketop.get_actual_velocity()) +
                                "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
                            1);  // Don't override the top Page line
 
@@ -377,10 +423,12 @@ void opcontrol() {
           // contols for intake
          if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move(127);
+            belt_state = on;
          } else if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
            intake.move(-127);
          } else {
            intake.move(0);
+           belt_state = off;
          }
 
 
@@ -404,12 +452,29 @@ void opcontrol() {
           scoop.set_value(false);
          }
 
+
+        // controls for release on claw
+        if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+          Rdoinker.set_value(true);
+         } else {
+          Rdoinker.set_value(false);
+         }
+
          // controls for release on claw
          if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-          ring_rush.set_value(true);
+          Ldoinker.set_value(true);
          } else {
-          ring_rush.set_value(false);
+          Ldoinker.set_value(false);
          }
+
+
+
+        //  // controls for release on claw
+        //  if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+        //   ring_rush.set_value(true);
+        //  } else {
+        //   ring_rush.set_value(false);
+        //  }
 
 
  
@@ -433,10 +498,10 @@ void opcontrol() {
 
      if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       nextstate();
-    }
+    
 
-    if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      nextstate();
+     } else if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      Lift.move(127);
     }
      pros::delay(20);
 
