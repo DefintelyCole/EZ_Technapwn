@@ -35,8 +35,8 @@ ez::Drive chassis(
 // ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
 ez::tracking_wheel vert_tracker(10, 2, 0.25);   // This tracking wheel is parallel to the drive wheels
 
-const int numStates = 3;
-int states[numStates] = {0, 6000, 70000};
+const int numStates = 4;
+int states[numStates] = {0, 6500, 45000, 70000};
 int currState = 0;
 int target = 0;
 int killsafe = 0;
@@ -66,20 +66,20 @@ void liftControl() {
 void colorsort() {
    
   if (team_color == red){
-    if(color.get_hue() > 145){
+    if(color.get_hue() > 170){
       killsafe += 1;
       pros::delay(1);
       eject.set_value(1);
-      pros::delay(200);
+      pros::delay(350);
       eject.set_value(0);
     }
   }
   else if (team_color == blue) {
-    if(color.get_hue() < 40){
+    if(color.get_hue() < 20){
       killsafe += 1;
       pros::delay(1);
       eject.set_value(1);
-      pros::delay(200);
+      pros::delay(350);
       eject.set_value(0);
     }
    
@@ -218,7 +218,7 @@ void initialize() {
       {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 4 rings on then touches bar", RedWP},
       {"Red6Ring\n\nRedWP with rush to middle", Red6Ring},
       {"RedSigWP\n\nfull auton WP for Signature Events", RedSigWP},
-      {"Red3Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red4Ring},
+      {"Red4Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red4Ring},
       {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
       {"Red4RingWP\n\nRed4Ring but touches middle bar", Red4RingWP},
       {"RedRush\n\nRing Rush", RedRush},
@@ -441,6 +441,31 @@ void opcontrol() {
           Mogo_mech.set_value(false);
          }
 
+         if  (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+          chassis.odom_theta_set(0);
+          chassis.pid_drive_set(-4.5, 100, true);
+          chassis.pid_wait();
+          nextstate();
+          nextstate();
+          pros::delay(100);
+          intake.move(-127);
+          pros::delay(100);
+          intake.move(0);
+          pros::delay(700);
+          chassis.pid_drive_set(-4.5, 100, true);
+          chassis.pid_wait();
+          nextstate();
+
+
+         }
+
+
+
+  
+
+
+         
+
 
 
 
@@ -483,7 +508,7 @@ void opcontrol() {
           
 
 
-         if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+         if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
               team_color = red;
          
          } else if (Master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -498,10 +523,11 @@ void opcontrol() {
 
      if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       nextstate();
+      nextstate();
     
 
      } else if (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      Lift.move(127);
+      nextstate();
     }
      pros::delay(20);
 
