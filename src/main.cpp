@@ -33,10 +33,11 @@ ez::Drive chassis(
 // - `2.75` is the wheel diameter
 // - `4.0` is the distance from the center of the wheel to the center of the robot
 // ez::tracking_wheel horiz_tracker(8, 2, 1.625);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(10, 2, 0.25);   // This tracking wheel is parallel to the drive wheels
+ez::tracking_wheel vert_tracker(10, 2, -0.5);   // This tracking wheel is parallel to the drive wheels
+ez::tracking_wheel horiz_tracker(17, 2, 1.00);   // This tracking wheel is parallel to the drive wheels
 
 const int numStates = 4;
-int states[numStates] = {0, 6500, 45000, 70000};
+int states[numStates] = {0, -2150, -20000, -24600};
 int currState = 0;
 int target = 0;
 int killsafe = 0;
@@ -56,9 +57,9 @@ void nextstate() {
 
 
 void liftControl() {
-    double kp = 0.002;
+    double kp = 0.003;
     double error = target - lb.get_position();
-    double velocity = kp * error*3;
+    double velocity = kp * error*5;
     Lift.move(velocity);
 }
 
@@ -66,21 +67,23 @@ void liftControl() {
 void colorsort() {
    
   if (team_color == red){
-    if(color.get_hue() > 170){
+    if(color.get_hue() > 130){
+      if(activation.get_distance()<10){
       killsafe += 1;
-      pros::delay(1);
       eject.set_value(1);
-      pros::delay(350);
+      pros::delay(500);
       eject.set_value(0);
+    }
     }
   }
   else if (team_color == blue) {
-    if(color.get_hue() < 20){
+    if(color.get_hue() < 45){
+      if(activation.get_distance()<10){
       killsafe += 1;
-      pros::delay(1);
       eject.set_value(1);
-      pros::delay(350);
+      pros::delay(500);
       eject.set_value(0);
+      }
     }
    
   }
@@ -91,42 +94,6 @@ void colorsort() {
 
 
 }
-
-
-
-
-
-
-
-// void jamprevention() {
-  
-//   if (intaketop.get_actual_velocity() < 5){
-//       intaketop.move(-127);
-//       pros::delay(2000);
-//       intaketop.move(127);
-//       pros::delay(200);
-    
-//   }
-
-// }
-
-
-// void stuck() {
-
-// while(true) {
-//   if (belt_state == on) {
-//     jamprevention();
-//   }
-
-//   if (belt_state == off) {
-//     intake.move(0);
-//   }
-
-
-
-// }
-
-// }
 
 
 void Killswitch () {

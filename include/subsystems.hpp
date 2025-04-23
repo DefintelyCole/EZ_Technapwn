@@ -3,6 +3,7 @@
 #include "EZ-Template/api.hpp"
 #include "api.h"
 #include "pros/adi.hpp"
+#include "pros/distance.hpp"
 #include "pros/misc.hpp"
 
 extern Drive chassis;
@@ -17,16 +18,18 @@ extern Drive chassis;
 inline pros::MotorGroup intake ({-20,2});
 inline pros::Motor intakebottom (2);
 inline pros::Motor intaketop (-20);
-inline pros::Motor Lift (-9);
+inline pros::Motor Lift (9);
 inline pros::adi::DigitalOut Mogo_mech('B');
 inline pros::adi::DigitalOut Rdoinker('C');
 inline pros::adi::DigitalOut Ldoinker('A');
 inline pros::adi::DigitalOut eject('D');
-inline pros::Optical color(18);
-inline pros::Rotation lb(-11);
+inline pros::Optical color(16);
+inline pros::Rotation lb(11);
 inline pros::Controller Master(pros::E_CONTROLLER_MASTER);
 inline pros::adi::DigitalOut ring_rush('H');
 inline pros::adi::DigitalOut scoop('G');
+// inline pros::adi::DigitalIn activation('E');
+inline pros::Distance activation(15);
 
 inline std::string team_color;
 inline std::string blue = "blue";
