@@ -69,9 +69,10 @@ void colorsort() {
   if (team_color == red){
     if(color.get_hue() > 130){
       if(activation.get_distance()<10){
-      killsafe += 1;
+      pros::delay(0);
       eject.set_value(1);
-      pros::delay(500);
+      killsafe += 1;
+      pros::delay(400);
       eject.set_value(0);
     }
     }
@@ -79,9 +80,10 @@ void colorsort() {
   else if (team_color == blue) {
     if(color.get_hue() < 45){
       if(activation.get_distance()<10){
-      killsafe += 1;
+      pros::delay(0);
       eject.set_value(1);
-      pros::delay(500);
+      killsafe += 1;
+      pros::delay(400);
       eject.set_value(0);
       }
     }
@@ -185,17 +187,18 @@ void initialize() {
       {"RedWP\n\nscores ring on alliance stake then grabs goal and puts 4 rings on then touches bar", RedWP},
       {"Red6Ring\n\nRedWP with rush to middle", Red6Ring},
       {"RedSigWP\n\nfull auton WP for Signature Events", RedSigWP},
-      {"Red4Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red4Ring},
+      {"Red5Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Red5Ring},
       {"RedGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", RedGoal},
-      {"Red4RingWP\n\nRed4Ring but touches middle bar", Red4RingWP},
       {"RedRush\n\nRing Rush", RedRush},
+      {"Red5+1Neg\n\alliance stake and 5", Red4RingWP},
+      {"Red4+1Pos\n\alliance stake and 4", RedWP_Pos},
       {"BlueWP\n\nMirror of RedWP", BlueWP},
-      {"BlueSigWP\n\nfull auton WP for Signature Events", BlueSigWP},
       {"Blue6Ring\n\nBlueWP with rush to middle", Blue6Ring},
-      {"Blue4Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Blue4Ring},
-      {"Blue3Ring\n\nMirror of Red3Ring", Blue3Ring},
+      {"BlueSigWP\n\nfull auton WP for Signature Events", BlueSigWP},
+      {"Blue5Ring\n\nputs a ring on alliance stake then grabs red ring ontop of double stack grabs goal and scores 2 rings on it", Blue5Ring},
       {"BlueGoalRush\n\nGoal rush and put 1 ring on goal grab other goal ring on that one then clear corner", BlueGoal},
       {"BlueRush\n\nRushes to the middle for the 2 rings grabs goal and scores 4 to 5 rings on it", BlueRush},
+      {"Blue4+1Pos\n\nalliance stake and 4", BlueWP_Pos},
       {"Skills\n\nscores 6 rings on 2 goals in corner and pushes 2 other goals in to corners", Skills},
       {"test\n\nPID Tuning", drive_example},
       
@@ -410,7 +413,7 @@ void opcontrol() {
 
          if  (Master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
           chassis.odom_theta_set(0);
-          chassis.pid_drive_set(-4.5, 100, true);
+          chassis.pid_drive_set(-6, 100, true);
           chassis.pid_wait();
           nextstate();
           nextstate();
